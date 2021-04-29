@@ -42,7 +42,7 @@ function addEdge() {
       id: document.getElementById("edge-id").value,
       from: document.getElementById("edge-from").value,
       to: document.getElementById("edge-to").value,
-      arrows: document.getElementById("checkbox_idTo").value,
+      arrows: document.getElementById("edge-Arrow").value,
         });
   } catch (err) {
     alert(err);
