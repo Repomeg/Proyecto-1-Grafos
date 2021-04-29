@@ -16,8 +16,7 @@
     </head>
     <body>
       <p>
-        This example demonstrates dynamically adding, updating and removing nodes and
-        edges using a DataSet.
+       Trabajo 1 Grafos .
       </p>
       
       <h1>Adjust</h1>
@@ -57,24 +56,29 @@
                   <tr>
                     <td></td>
                     <td><label for="edge-id">Id</label></td>
-                    <td><input id="edge-id" type="text" value="5" /></td>
+                    <td><input id="edge-id" type="text" value="1" /></td>
                   </tr>
                   <tr>
                     <td></td>
                     <td><label for="edge-from">From</label></td>
-                    <td><input id="edge-from" type="text" value="3" /></td>
+                    <td><input id="edge-from" type="text" value="1" /></td>
                   </tr>
                   <tr>
                     <td></td>
                     <td><label for="edge-to">To</label></td>
-                    <td><input id="edge-to" type="text" value="4" /></td>
+                    <td><input id="edge-to" type="text" value="2" /></td>
                   </tr>
-                  <div class="container">
-                    <div class="round">
-                      <input type="checkbox" name="checkbox" id="checkbox_id" value="value">
-                      <label for="checkbox_id"></label>
-                    </div>
-                  </div>
+                  <tr>
+                    <td></td>
+                    <td><label for="edge-Arrow">Arrow</label></td>
+                    <td><select id="edge-Arrow">
+                      <option value="to">Hacia</option>
+                      <option value="from">Desde</option>
+                      <option value= "null" >Ninguna</option>
+                      <option value="to from">Ambas</option>
+                    </td>
+                    </select>  
+                  </tr>  
                   <tr>
                     <td></td>
                     <td>Action</td>
@@ -82,6 +86,8 @@
                       <button id="edge-add" onclick="addEdge();">Add</button>
                       <button id="edge-update" onclick="updateEdge();">Update</button>
                       <button id="edge-remove" onclick="removeEdge();">Remove</button>
+                      <button id="matrix" onclick="llenarMatriz();">Matriz</button>
+                      <!--<button id="conexo" onclick="conexo2();">Conexo?</button>-->
                     </td>
                   </tr>
                 </tbody>
@@ -96,7 +102,8 @@
         <colgroup>
           <col width="25%" />
           <col width="25%" />
-          <col width="50%" />
+          <col width="25%" />
+          <col width="25%" />
         </colgroup>
         <tbody>
           <tr>
@@ -112,8 +119,18 @@
       
             <td>
               <h2>Network</h2>
-      
               <div id="mynetwork"></div>
+            </td>  
+            <td>
+              <h2 class="nombreM">Matriz</h2>
+              <table id="table" border="1"></table>
+            </td>
+            <!--<td>
+              <h2 class="conexo">Es o no conexo</h2>
+            </td>-->
+            <td>
+              <h2 class="conexo2">Es o no conexo</h2>
+              <p>El grafo es <strong id="conexo"></strong></p>
             </td>
           </tr>
         </tbody>
