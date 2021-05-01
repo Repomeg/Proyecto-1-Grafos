@@ -12,129 +12,67 @@
         <!--Links de network-->
         <link rel="preload" href="styles.css" as="style">
         <link rel="stylesheet" href="styles.css">
-        
     </head>
     <body>
-      <p>
-       Trabajo 1 Grafos .
-      </p>
+      <form id="form1" value="NoDirigido">
+        <h1>Ingrese el tipo de grafo</h1>
+        <input type = "radio"  name = "Direccion" value = "Dirigido" required oninvalid="this.setCustomValidity('Por Favor seleccione una de las opciones')"> Dirigido</input>
+        <input type = "radio"  name = "Direccion" value = "NoDirigido" required oninvalid="this.setCustomValidity('Por Favor seleccione una de las opciones')"> No Dirigido</input>
+        <input type = "submit" id = "btn" ></input>
+        <br><br>
+      </form>
+      <button type="button" id="locale" value="es" onclick="draw();">Comenzar Grafos</button>
+      <td>
+      <button id="matrix" onclick="llenarMatriz();">Reproducir Matriz</button>
+      </td>
+      <td>
+        <button id="conexo" onclick="conexo();">¿Es conexo?</button>
+        </td>
+      <br>
       
-      <h1>Adjust</h1>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <h2>Node</h2>
-              <table>
-                <tbody>
-                  <tr>
-                    <td></td>
-                    <td><label for="node-id">Id</label></td>
-                    <td><input id="node-id" type="text" value="6" /></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td><label for="node-label">Label</label></td>
-                    <td><input id="node-label" type="text" value="Node 6" /></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td>Action</td>
-                    <td>
-                      <button id="node-add" onclick="addNode();">Add</button>
-                      <button id="node-update" onclick="updateNode();">Update</button>
-                      <button id="node-remove" onclick="removeNode();">Remove</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-            <td>
-              <h2>Edge</h2>
-              <table>
-                <tbody>
-                  <tr>
-                    <td></td>
-                    <td><label for="edge-id">Id</label></td>
-                    <td><input id="edge-id" type="text" value="1" /></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td><label for="edge-from">From</label></td>
-                    <td><input id="edge-from" type="text" value="1" /></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td><label for="edge-to">To</label></td>
-                    <td><input id="edge-to" type="text" value="2" /></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td><label for="edge-Arrow">Arrow</label></td>
-                    <td><select id="edge-Arrow">
-                      <option value="to">Hacia</option>
-                      <option value="from">Desde</option>
-                      <option value= "null" >Ninguna</option>
-                      <option value="to from">Ambas</option>
-                    </td>
-                    </select>  
-                  </tr>  
-                  <tr>
-                    <td></td>
-                    <td>Action</td>
-                    <td>
-                      <button id="edge-add" onclick="addEdge();">Add</button>
-                      <button id="edge-update" onclick="updateEdge();">Update</button>
-                      <button id="edge-remove" onclick="removeEdge();">Remove</button>
-                      <button id="matrix" onclick="llenarMatriz();">Matriz</button>
-                      <!--<button id="conexo" onclick="conexo2();">Conexo?</button>-->
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div id="node-popUp">
+        <span id="node-operation">node</span> <br />
+        <table style="margin: auto">
+          <tbody>
+            <tr>
+              <td>id</td>
+              <td><input id="node-id" value="new value" /></td>
+            </tr>
+            <tr>
+              <td>Etiquetado</td>
+              <td><input id="node-label" value="new value" /></td>
+            </tr>
+          </tbody>
+        </table>
+        <input type="button" value="save" id="node-saveButton" />
+        <input type="button" value="cancel" id="node-cancelButton" />
+      </div>
       
-      <h1>View</h1>
-      <table class="view">
-        <colgroup>
-          <col width="25%" />
-          <col width="25%" />
-          <col width="25%" />
-          <col width="25%" />
-        </colgroup>
-        <tbody>
-          <tr>
-            <td>
-              <h2>Nodes</h2>
-              <pre id="nodes"></pre>
-            </td>
+      <div id="edge-popUp">
+        <span id="edge-operation">edge</span> <br />
+        <table style="margin: auto">
+          <tbody>
+            <tr>
+              <td>label</td>
+              <td><input id="edge-label" value="new value" /></td>
+            </tr>
+          </tbody>
+        </table>
+        <input type="button" value="save" id="edge-saveButton" />
+        <input type="button" value="cancel" id="edge-cancelButton" />
+      </div>
+      <td>
+    </td>
       
-            <td>
-              <h2>Edges</h2>
-              <pre id="edges"></pre>
-            </td>
-      
-            <td>
-              <h2>Network</h2>
-              <div id="mynetwork"></div>
-            </td>  
-            <td>
-              <h2 class="nombreM">Matriz</h2>
-              <table id="table" border="1"></table>
-            </td>
-            <!--<td>
-              <h2 class="conexo">Es o no conexo</h2>
-            </td>-->
-            <td>
-              <h2 class="conexo2">Es o no conexo</h2>
-              <p>El grafo es <strong id="conexo"></strong></p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      
-    </body>
+      <br />
+      <div id="mynetwork"></div>
+      <div>
+        <h2 class="nombreM">Matriz</h2>
+        <table id="table" border="2"></table>
+        
+    </div>
+
+
+      <script src = "main.js" type="text/javascript" href = "main.js"> </script>
+  </body>
 </html>

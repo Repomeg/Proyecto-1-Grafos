@@ -1,259 +1,281 @@
-var nodes, edges ,network;
+var nodes = null;
+var edges = null;
+var network = null;
 
-// convenience method to stringify a JSON object
-function toJSON(obj) {
-  return JSON.stringify(obj, null, 4);
-}
+var form = document.querySelector('#form1');
+console.log(form);
 
+form.addEventListener('submit', (e) =>{
 
-function addNode() {
-  try {
-    nodes.add({
-      id: document.getElementById("node-id").value,
-      label: document.getElementById("node-label").value,
+  console.log(form.Direccion.value);
+  e.preventDefault();
+  
+});
+
+var vertices = null;
+var aristas_from = null;
+var aristas_to = null;
+var peso = null;
+
+// randomly create some nodes and edges
+var data = getScaleFreeNetwork(0);
+var seed = 2;
+
+function getScaleFreeNetwork(nodeCount) {
+  var nodes = [];
+  var edges = [];
+  var connectionCount = [];
+
+  // randomly create some nodes and edges
+  for (var i = 0; i < nodeCount; i++) {
+    nodes.push({
+      id: i,
+      label: String(i)
     });
-  } catch (err) {
-    alert(err);
+
+    connectionCount[i] = 0;
+
+    // create edges in a scale-free-network way
+    if (i == 1) {
+      var from = i;
+      var to = 0;
+      edges.push({
+        from: from,
+        to: to
+      });
+      connectionCount[from]++;
+      connectionCount[to]++;
+    }
+    else if (i > 1) {
+      var conn = edges.length * 2;
+      var rand = Math.floor(Math.random() * conn);
+      var cum = 0;
+      var j = 0;
+      while (j < connectionCount.length && cum < rand) {
+        cum += connectionCount[j];
+        j++;
+      }
+
+
+      var from = i;
+      var to = j;
+      edges.push({
+        from: from,
+        to: to
+      });
+      connectionCount[from]++;
+      connectionCount[to]++;
+    }
+  }
+
+  return {nodes:nodes, edges:edges};
+}
+
+function destroy() {
+  if (network !== null) {
+    network.destroy();
+    network = null;
   }
 }
 
-function updateNode() {
-  try {
-    nodes.update({
-      id: document.getElementById("node-id").value,
-      label: document.getElementById("node-label").value,
-    });
-  } catch (err) {
-    alert(err);
-  }
+
+function buscarConexo(columna,fila){
+  for(let i=0; i<(aristas_from.length);i++){
+    if(form.Direccion.value=='Dirigido'){
+      if(columna===aristas_from[i] && fila===aristas_to[i])
+          return 1;
+    }else{
+      if(columna===aristas_from[i] && fila===aristas_to[i] || columna===aristas_to[i] &&  fila===aristas_from[i])
+        return 1;
+    }
+    }
 }
 
-function removeNode() {
-  try {
-    nodes.remove({ id: document.getElementById("node-id").value });
-  } catch (err) {
-    alert(err);
-  }
-}
-
-function addEdge() {
-  try {
-    edges.add({
-      id: document.getElementById("edge-id").value,
-      from: document.getElementById("edge-from").value,
-      to: document.getElementById("edge-to").value,
-      arrows: document.getElementById("edge-Arrow").value,
-        });
-  } catch (err) {
-    alert(err);
-  }
-}
-function updateEdge() {
-  try {
-    edges.update({
-      id: document.getElementById("edge-id").value,
-      from: document.getElementById("edge-from").value,
-      to: document.getElementById("edge-to").value,
-      arrows: document.getElementById("edge-Arrow").value,
-    });
-  } catch (err) {
-    alert(err);
-  }
-}
-function removeEdge() {
-  try {
-    edges.remove({ id: document.getElementById("edge-id").value });
-  } catch (err) {
-    alert(err);
-  }
-}
 
 function llenarMatriz() {
-  var Table = document.getElementById("table");
-  Table.innerHTML = "";
-  var mapfrom = edges.map((edges) => edges.from);
-  console.log(mapfrom);
-
-  var mapto = edges.map((edges) => edges.to);
-  console.log(mapto);
- 
-  for(var i = 0; i < mapfrom.length; i++) {
-    mapfrom[i] = +mapfrom[i];
+  
+  var table = document.getElementById("table");
+  table.innerHTML = "";
+  var mAdyacencia = [];
+  var aux = []; // columnas
+    for(let i=0; i<vertices.length;i++){
+      for(let j=0; j<vertices.length;j++){
+        if(buscarConexo(vertices[i],vertices[j])===1){
+          aux.push(1);
+         }
+        else{
+          aux.push(0);
+        }   
+      }
+      mAdyacencia[i]=aux;
+      aux=[];
     }
     
-  for (var i = 0; i< mapto.length; i++){
-    mapto[i] = +mapto[i];
-  }
-  var largo = nodes.length;
+    console.log(mAdyacencia);
 
-  let matrix = new Array(largo+1);
-  
-  for (let i = 0; i< matrix.length;i++){
-    matrix[i] = new Array(matrix.length);
-  }
+    for(var i=0; i<mAdyacencia.length; i++) {
+      var newRow = table.insertRow(table.length);
+      for(var j=0; j<mAdyacencia[i].length; j++) {
+        var cell = newRow.insertCell(j);
 
-  for(let i = 0; i<matrix.length; i++){
-    for(let j = 0; j< matrix[i].length; j++){
-      matrix[i][j]=0;
-    }
-  }
-
-  for(let i=0; i<matrix.length; i++) {
-    matrix[i][0]=i;
-  }
-
-  for(let j=0; j<matrix.length; j++) {
-    matrix[0][j]=j;
-  }
-
-  for(let c=0; c<=matrix.length; c++) {
-    for(let i=0; i<matrix.length; i++) {
-      for(let j=0; j<matrix[i].length; j++) {
-        if(i === mapfrom[c] && j === mapto[c]) {
-          matrix[i][j] = 1;
-          matrix[j][i] = 1;
-        }
+        cell.innerHTML = mAdyacencia[i][j];
       }
     }
-  }
-
-  console.log(matrix);
-
-  for(var i=0; i<matrix.length; i++) {
-    var newRow = table.insertRow(table.length);
-    for(var j=0; j<matrix[i].length; j++) {
-      var cell= newRow.insertCell(j);
-
-      cell.innerHTML = matrix[i][j];
-    }
-  }
-  conexo(matrix);
+    conexo(mAdyacencia);
+    return mAdyacencia;
 }
 
-function conexo(matrix){  
-  document.getElementById("conexo").innerHTML = '';
-  let cont=0;
-  for(let i=1; i<=nodes.length;i++){
-    for(let j=1; j<=nodes.length;j++){
-      console.log(matrix[i][j]);
-      if(matrix[i][j]!=0){
+function conexo(mAdyacencia){
+  var  cont=0;
+  for(let i=0; i<mAdyacencia.length;i++){
+    for(let j=0; j<mAdyacencia.length;j++){
+      if(mAdyacencia[i][j]!=0){
         cont++;
       }
-    }
+    } 
   }
-
-  if(cont!=0)
-    document.getElementById("conexo").innerHTML +="<p> Este grafo es de tipo conexo";
-
-  else
-     document.getElementById("conexo").innerHTML +="<p> Este grafo es de tipo no conexo";
-}
-
-const dijkstra = function (graph, start) {
-
-  //This contains the distances from the start node to all other nodes
-  var distances = [];
-  //Initializing with a distance of "Infinity"
-  for (var i = 0; i < graph.length; i++) distances[i] = Number.MAX_VALUE;
-  //The distance from the start node to itself is of course 0
-  distances[start] = 0;
-
-  //This contains whether a node was already visited
-  var visited = [];
-
-  //While there are nodes left to visit...
-  while (true) {
-      // ... find the node with the currently shortest distance from the start node...
-      var shortestDistance = Number.MAX_VALUE;
-      var shortestIndex = -1;
-      for (var i = 0; i < graph.length; i++) {
-          //... by going through all nodes that haven't been visited yet
-          if (distances[i] < shortestDistance && !visited[i]) {
-              shortestDistance = distances[i];
-              shortestIndex = i;
-          }
-      }
-
-      console.log("Visiting node " + shortestDistance + " with current distance " + shortestDistance);
-
-      if (shortestIndex === -1) {
-          // There was no node not yet visited --> We are done
-          return distances;
-      }
-
-      //...then, for all neighboring nodes....
-      for (var i = 0; i < graph[shortestIndex].length; i++) {
-          //...if the path over this edge is shorter...
-          if (graph[shortestIndex][i] !== 0 && distances[i] > distances[shortestIndex] + graph[shortestIndex][i]) {
-              //...Save this path as new shortest path.
-              distances[i] = distances[shortestIndex] + graph[shortestIndex][i];
-              console.log("Updating distance of node " + i + " to " + distances[i]);
-          }
-      }
-      // Lastly, note that we are finished with this node.
-      visited[shortestIndex] = true;
-      console.log("Visited nodes: " + visited);
-      console.log("Currently lowest distances: " + distances);
-
+  if(cont!=0) {
+    console.log("es conexo");
+    return true;
   }
-};
-
-function imprimirCaminoCorto(){
-  console.log(dijkstra(matrix, 1));
+  else{
+    console.log("no es conexo");
+    return false;
+  }
 }
-
 
 function draw() {
-  // create an array with nodes
-  nodes = new vis.DataSet();
-  nodes.on("*", function () {
-    document.getElementById("nodes").innerText = JSON.stringify(
-      nodes.get(),
-      null,
-      4
-    );
-  });
-  nodes.add([
-    { id: "1", label: "Node 1" },
-    { id: "2", label: "Node 2" },
-    { id: "3", label: "Node 3" },
-    { id: "4", label: "Node 4" },
-    { id: "5", label: "Node 5" },
-  ]);
+  destroy();
+  nodes = [];
+  edges = [];
 
-  // create an array with edges
-  edges = new vis.DataSet();
-  edges.on("*", function () {
-    document.getElementById("edges").innerText = JSON.stringify(
-      edges.get(),
-      null,
-      4
-    );
-  });
-
-  edges.add([
-    { id: "1", from: "1", to: "2", arrows: document.getElementById("edge-Arrow").value },
-    { id: "2", from: "2", to: "3", arrows: document.getElementById("edge-Arrow").value },
-    { id: "3", from: "3", to: "4", arrows: document.getElementById("edge-Arrow").value },
-    { id: "4", from: "4", to: "5", arrows: document.getElementById("edge-Arrow").value },
-    { id: "5", from: "5", to: "1", arrows: document.getElementById("edge-Arrow").value },
-  ]);
-
-
-
-
+  vertices = [];
+  aristas_from = [];
+  aristas_to = [];
+  peso = [];
+  
+  var form = document.querySelector('#form1');
   // create a network
   var container = document.getElementById("mynetwork");
-  var data = {
-    nodes: nodes,
-    edges: edges,
-  };
   var options = {
-    
+    layout: { randomSeed: seed }, // just to make sure the layout is the same when the locale is changed
+    locale: document.getElementById("locale").value,
+    manipulation: {
+      addNode: function (data, callback) {
+        // filling in the popup DOM elements
+        document.getElementById("node-operation").innerText = "Add Node";
+        editNode(data, clearNodePopUp, callback);
+      },
+      editNode: function (data, callback) {
+        // filling in the popup DOM elements
+        document.getElementById("node-operation").innerText = "Edit Node";
+        editNode(data, cancelNodeEdit, callback);
+      },
+      addEdge: function (data, callback) {
+        if (data.from == data.to) {
+          var r = confirm("Do you want to connect the node to itself?");
+          if (r != true) {
+            callback(null);
+            return;
+          }
+        }
+        if(form.Direccion.value=='Dirigido'){
+          var options = {
+            edges:{
+              arrows:{
+                to:{
+                  enabled: true,
+                  scaleFactor: 1,
+                  type: "arrow"
+                }
+              }
+                 
+            }
+          }
+          network.setOptions(options);
+        }
+        document.getElementById("edge-operation").innerText = "Add Edge";
+        editEdgeWithoutDrag(data, callback);
+      },
+      editEdge: {
+        editWithoutDrag: function (data, callback) {
+          document.getElementById("edge-operation").innerText = "Edit Edge";
+          editEdgeWithoutDrag(data, callback);
+        },
+      },
+    },
   };
   network = new vis.Network(container, data, options);
 }
 
-window.addEventListener("load", () => {
+function editNode(data, cancelAction, callback) {
+  document.getElementById("node-label").value = data.label;
+  document.getElementById("node-saveButton").onclick = saveNodeData.bind(this, data, callback);
+  document.getElementById("node-cancelButton").onclick = cancelAction.bind(this, callback);
+  document.getElementById("node-popUp").style.display = 'block';
+}
+
+// Callback passed as parameter is ignored
+function clearNodePopUp() {
+  document.getElementById('node-saveButton').onclick = null;
+  document.getElementById('node-cancelButton').onclick = null;
+  document.getElementById('node-popUp').style.display = 'none';
+}
+
+function cancelNodeEdit(callback) {
+  clearNodePopUp();
+  callback(null);
+}
+
+function saveNodeData(data, callback) {
+  data.id = document.getElementById('node-id').value;
+  data.label = document.getElementById('node-id').value;
+  for(var i=0; i < vertices.length ;i++){
+    if(vertices[i]==data.id){
+      clearNodePopUp();
+      return alert("Nodo ya existente");  
+    }  
+  }
+  vertices.push(data.id);
+  clearNodePopUp();
+  callback(data);
+}
+
+function editEdgeWithoutDrag(data, callback) {
+  // filling in the popup DOM elements
+  // document.getElementById('edge-label').value = data.label;
+  document.getElementById('edge-saveButton').onclick = saveEdgeData.bind(this, data, callback);
+  document.getElementById('edge-cancelButton').onclick = cancelEdgeEdit.bind(this,callback);
+  document.getElementById('edge-popUp').style.display = 'block';
+}
+
+function clearEdgePopUp() {
+  document.getElementById("edge-saveButton").onclick = null;
+  document.getElementById("edge-cancelButton").onclick = null;
+  document.getElementById("edge-popUp").style.display = "none";
+}
+
+function cancelEdgeEdit(callback) {
+  clearEdgePopUp();
+  callback(null);
+}
+
+function saveEdgeData(data, callback) {
+  if (typeof data.to === 'object')
+    data.to = data.to.id;
+ 
+  if (typeof data.from === 'object')
+    data.from = data.from.id;
+
+  data.label = document.getElementById('edge-label').value;
+  aristas_from.push(data.from);
+  aristas_to.push(data.to);
+  peso.push(data.label);
+
+  clearEdgePopUp();
+  callback(data);
+}
+
+function init() {
   draw();
-});
+}
