@@ -18,16 +18,10 @@
         <h1>Ingrese el tipo de grafo</h1>
         <input type = "radio"  name = "Direccion" value = "Dirigido" required oninvalid="this.setCustomValidity('Por Favor seleccione una de las opciones')"> Dirigido</input>
         <input type = "radio"  name = "Direccion" value = "NoDirigido" required oninvalid="this.setCustomValidity('Por Favor seleccione una de las opciones')"> No Dirigido</input>
-        <input type = "submit" id = "btn" ></input>
         <br><br>
       </form>
       <button type="button" id="locale" value="es" onclick="draw();">Comenzar Grafos</button>
-      <td>
-      <button id="matrix" onclick="llenarMatriz();">Reproducir Matriz</button>
-      </td>
-      <td>
-        <button id="conexo" onclick="conexo();">¿Es conexo?</button>
-        </td>
+     
       <br>
       
       <div id="node-popUp">
@@ -66,10 +60,14 @@
       
       <br />
       <div id="mynetwork"></div>
+      <td>
+        <br><br>
+        <button id="matrix" onclick="llenarMatriz();">Reproducir Matriz</button>
+        </td>
       <div>
         <h2 class="nombreM">Matriz</h2>
-        <table id="table" border="2"></table>
-        
+        <table id="table"></table>
+        <div id="conex"></div>
     </div>
 
 

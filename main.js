@@ -5,12 +5,12 @@ var network = null;
 var form = document.querySelector('#form1');
 console.log(form);
 
-form.addEventListener('submit', (e) =>{
+/*form.addEventListener('submit', (e) =>{
 
   console.log(form.Direccion.value);
   e.preventDefault();
   
-});
+});*/
 
 var vertices = null;
 var aristas_from = null;
@@ -136,10 +136,12 @@ function conexo(mAdyacencia){
   }
   if(cont!=0) {
     console.log("es conexo");
+    document.getElementById('conex').innerHTML='Su matriz es conexa';
     return true;
   }
   else{
     console.log("no es conexo");
+    document.getElementById('conex').innerHTML='Su matriz no es conexa';
     return false;
   }
 }
