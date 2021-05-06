@@ -4,8 +4,8 @@ select {
 }
 #mynetwork {
   position: relative;
-  width: 800px;
-  height: 600px;
+  width: 500px;
+  height: 500px;
   border: 1px solid lightgray;
 }
 table.legend_table {

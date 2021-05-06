@@ -2,74 +2,22 @@ var nodes = null;
 var edges = null;
 var network = null;
 
-var form = document.querySelector('#form1');
-console.log(form);
-
-/*form.addEventListener('submit', (e) =>{
-
-  console.log(form.Direccion.value);
-  e.preventDefault();
-  
-});*/
-
 var vertices = null;
 var aristas_from = null;
 var aristas_to = null;
+var aristas = [];
 var peso = null;
 
+var mAdyacencia = null;
+var mCaminos = null;
+
+var infociclo;
+
+var form = document.querySelector("#form1");
+
 // randomly create some nodes and edges
-var data = getScaleFreeNetwork(0);
+var data = null;
 var seed = 2;
-
-function getScaleFreeNetwork(nodeCount) {
-  var nodes = [];
-  var edges = [];
-  var connectionCount = [];
-
-  // randomly create some nodes and edges
-  for (var i = 0; i < nodeCount; i++) {
-    nodes.push({
-      id: i,
-      label: String(i)
-    });
-
-    connectionCount[i] = 0;
-
-    // create edges in a scale-free-network way
-    if (i == 1) {
-      var from = i;
-      var to = 0;
-      edges.push({
-        from: from,
-        to: to
-      });
-      connectionCount[from]++;
-      connectionCount[to]++;
-    }
-    else if (i > 1) {
-      var conn = edges.length * 2;
-      var rand = Math.floor(Math.random() * conn);
-      var cum = 0;
-      var j = 0;
-      while (j < connectionCount.length && cum < rand) {
-        cum += connectionCount[j];
-        j++;
-      }
-
-
-      var from = i;
-      var to = j;
-      edges.push({
-        from: from,
-        to: to
-      });
-      connectionCount[from]++;
-      connectionCount[to]++;
-    }
-  }
-
-  return {nodes:nodes, edges:edges};
-}
 
 function destroy() {
   if (network !== null) {
@@ -78,25 +26,27 @@ function destroy() {
   }
 }
 
-
 function buscarConexo(columna,fila){
   for(let i=0; i<(aristas_from.length);i++){
-    if(form.Direccion.value=='Dirigido'){
+    if(form.Direccion.value=="Dirigido"){
       if(columna===aristas_from[i] && fila===aristas_to[i])
           return 1;
-    }else{
+    }
+    else{
       if(columna===aristas_from[i] && fila===aristas_to[i] || columna===aristas_to[i] &&  fila===aristas_from[i])
         return 1;
     }
-    }
+  }
 }
 
-
-function llenarMatriz() {
-  
+function llenarMatriz() {  
   var table = document.getElementById("table");
   table.innerHTML = "";
-  var mAdyacencia = [];
+  if(vertices==null) {
+    table.innerHTML = "No hay nodos en la matriz";
+    return 0;
+  }
+  mAdyacencia = [];
   var aux = []; // columnas
     for(let i=0; i<vertices.length;i++){
       for(let j=0; j<vertices.length;j++){
@@ -110,8 +60,6 @@ function llenarMatriz() {
       mAdyacencia[i]=aux;
       aux=[];
     }
-    
-    console.log(mAdyacencia);
 
     for(var i=0; i<mAdyacencia.length; i++) {
       var newRow = table.insertRow(table.length);
@@ -121,30 +69,155 @@ function llenarMatriz() {
         cell.innerHTML = mAdyacencia[i][j];
       }
     }
-    conexo(mAdyacencia);
+    MatCami();
+    conexo();
+    if(conexo()==true){
+      infociclo = ciclo();
+      euleriano();
+      if(infociclo==false){
+        console.log(hamiltoniano());
+      }
+    }
+    //console.log(euler());
     return mAdyacencia;
 }
 
-function conexo(mAdyacencia){
+function conexo(){
   var  cont=0;
-  for(let i=0; i<mAdyacencia.length;i++){
-    for(let j=0; j<mAdyacencia.length;j++){
-      if(mAdyacencia[i][j]!=0){
+  
+  for(let i=0; i<vertices.length;i++){
+    for(let j=0; j<vertices.length;j++){
+      if(mCaminos[i][j]===0){
         cont++;
       }
     } 
   }
   if(cont!=0) {
-    console.log("es conexo");
-    document.getElementById('conex').innerHTML='Su matriz es conexa';
-    return true;
-  }
-  else{
     console.log("no es conexo");
     document.getElementById('conex').innerHTML='Su matriz no es conexa';
     return false;
   }
+  else{
+    console.log("es conexo");
+    document.getElementById('conex').innerHTML='Su matriz es conexa';
+    return true;
+  }
 }
+
+function MatCami(){
+  var table = document.getElementById("TablaCam");
+  table.innerHTML = "";
+  mCaminos= mAdyacencia;
+  for(let k = 0; k < mCaminos.length; k++){
+    for(let i = 0; i < mCaminos.length; i++){
+      for(let j = 0; j < mCaminos.length; j++){
+        if(mAdyacencia[i][j] == 1 || mAdyacencia[i][k] == 1 && mAdyacencia[k][j] == 1){
+          mAdyacencia[i][j] = 1;
+        }
+        else{
+          mAdyacencia[i][j] = 0;
+        }
+      }
+    }
+  }
+  for(var i=0; i<mCaminos.length; i++) {
+    var newRow = table.insertRow(table.length);
+    for(var j=0; j<mCaminos[i].length; j++) {
+      var cell = newRow.insertCell(j);
+
+      cell.innerHTML = mCaminos[i][j];
+    }
+  }
+  console.log(mCaminos);
+  return mCaminos;
+}
+
+function gradoVertice(x){
+  var aux = 0;
+  var guardaNodo1 = 0;
+  var guardaNodo2 = 0;
+  
+  for(let i = 0; i<vertices.length; i++){
+    
+    guardaNodo1 = aristas_from[i];
+    guardaNodo2 = aristas_to[i];
+    
+    if(x === guardaNodo1 || x === guardaNodo2){
+      aux++;
+    }
+  }
+  console.log(aux);
+  return aux;
+}
+
+function ciclo(){
+  var grado, cont = 0;
+  for(let i =0;i<vertices.length;i++){
+    grado = gradoVertice(vertices[i]);
+    if(grado == 2){
+      cont++;
+    }
+  }
+  if(vertices.length==cont){
+    console.log("Es hamiltoniano");
+    return true;
+  }
+  else return false;
+}
+
+function hamiltoniano(){
+  cont = 0;
+  if(conexo() === true){
+      if(vertices.length>=3){
+        for(let i = 0; i<vertices.length; i++){
+          
+          if(gradoVertice(vertices[i]) >= (vertices.length/2)){
+            cont++;
+          }
+          
+        }
+        if(cont === vertices.length){
+          console.log("Es hamiltoniana");
+        }
+        else{
+          console.log("No es hamiltoniana");
+        }
+      }
+      else{
+        console.log("No es hamiltoniana");
+      }
+    }
+    else{
+    console.log("No es hamiltoniana");
+  }
+}
+
+function euleriano(){
+  var grad = [];
+  grad = gradoVertice(vertices);
+  for(let i=0; i<aristas.length;i++){
+    if(aristas[i][2]==true){
+      console.log("Su grado no es euleriano");
+    }
+  }
+}
+
+/*
+function euler(){
+  resultadoEuler = document.getElementById("resultadoEuler");
+  var grado = [];
+  grado = gradoGrafo(vertices,aristas);
+  // Verifica que no tenga aristas dirigidas
+  for(i=0; i<aristas.length; i++){
+      if(aristas[i][2] == true){
+          console.error("El grafo no es Euleriano");
+          alert("No es euleriano");
+          //resultadoEuler.innerHTML = false
+          return 0;
+      }
+  }
+}
+*/
 
 function draw() {
   destroy();
@@ -154,11 +227,12 @@ function draw() {
   vertices = [];
   aristas_from = [];
   aristas_to = [];
+  aristas = [];
   peso = [];
-  
-  var form = document.querySelector('#form1');
-  // create a network
   var container = document.getElementById("mynetwork");
+
+  // create a network
+  
   var options = {
     layout: { randomSeed: seed }, // just to make sure the layout is the same when the locale is changed
     locale: document.getElementById("locale").value,
@@ -181,7 +255,7 @@ function draw() {
             return;
           }
         }
-        if(form.Direccion.value=='Dirigido'){
+        if(form.Direccion.value=="Dirigido"){
           var options = {
             edges:{
               arrows:{
@@ -190,12 +264,26 @@ function draw() {
                   scaleFactor: 1,
                   type: "arrow"
                 }
-              }
-                 
+              }     
             }
           }
           network.setOptions(options);
         }
+        else {
+          var options = {
+            edges:{
+              arrows:{
+                to:{
+                  enabled: false,
+                  scaleFactor: 1,
+                  type: "arrow"
+                }
+              }
+            }
+          }
+          network.setOptions(options);
+        }
+        
         document.getElementById("edge-operation").innerText = "Add Edge";
         editEdgeWithoutDrag(data, callback);
       },
@@ -208,20 +296,21 @@ function draw() {
     },
   };
   network = new vis.Network(container, data, options);
+  document.getElementById("locale").innerHTML="Reiniciar Grafos";
 }
 
 function editNode(data, cancelAction, callback) {
   document.getElementById("node-label").value = data.label;
   document.getElementById("node-saveButton").onclick = saveNodeData.bind(this, data, callback);
   document.getElementById("node-cancelButton").onclick = cancelAction.bind(this, callback);
-  document.getElementById("node-popUp").style.display = 'block';
+  document.getElementById("node-popUp").style.display = "block";
 }
 
 // Callback passed as parameter is ignored
 function clearNodePopUp() {
-  document.getElementById('node-saveButton').onclick = null;
-  document.getElementById('node-cancelButton').onclick = null;
-  document.getElementById('node-popUp').style.display = 'none';
+  document.getElementById("node-saveButton").onclick = null;
+  document.getElementById("node-cancelButton").onclick = null;
+  document.getElementById("node-popUp").style.display = "none";
 }
 
 function cancelNodeEdit(callback) {
@@ -230,8 +319,8 @@ function cancelNodeEdit(callback) {
 }
 
 function saveNodeData(data, callback) {
-  data.id = document.getElementById('node-id').value;
-  data.label = document.getElementById('node-id').value;
+  data.id = document.getElementById("node-id").value;
+  data.label = document.getElementById("node-label").value;
   for(var i=0; i < vertices.length ;i++){
     if(vertices[i]==data.id){
       clearNodePopUp();
@@ -245,10 +334,10 @@ function saveNodeData(data, callback) {
 
 function editEdgeWithoutDrag(data, callback) {
   // filling in the popup DOM elements
-  // document.getElementById('edge-label').value = data.label;
-  document.getElementById('edge-saveButton').onclick = saveEdgeData.bind(this, data, callback);
-  document.getElementById('edge-cancelButton').onclick = cancelEdgeEdit.bind(this,callback);
-  document.getElementById('edge-popUp').style.display = 'block';
+  document.getElementById("edge-label").value = data.label;
+  document.getElementById("edge-saveButton").onclick = saveEdgeData.bind(this, data, callback);
+  document.getElementById("edge-cancelButton").onclick = cancelEdgeEdit.bind(this,callback);
+  document.getElementById("edge-popUp").style.display = "block";
 }
 
 function clearEdgePopUp() {
@@ -263,19 +352,20 @@ function cancelEdgeEdit(callback) {
 }
 
 function saveEdgeData(data, callback) {
-  if (typeof data.to === 'object')
+  if (typeof data.to === "object")
     data.to = data.to.id;
  
-  if (typeof data.from === 'object')
+  if (typeof data.from === "object")
     data.from = data.from.id;
 
-  data.label = document.getElementById('edge-label').value;
-  aristas_from.push(data.from);
-  aristas_to.push(data.to);
-  peso.push(data.label);
+  data.label = document.getElementById("edge-label").value;
 
   clearEdgePopUp();
   callback(data);
+  aristas[aristas_from.length] = [data.from, data.to];
+  aristas_from.push(data.from);
+  aristas_to.push(data.to);
+  peso.push(data.label);
 }
 
 function init() {

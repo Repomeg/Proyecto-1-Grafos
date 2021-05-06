@@ -5,8 +5,7 @@
         <meta charset = "UTF-8 ">
         <!--Hoja de estilos de css-->
         <link rel = "stylesheet" href = "styles.css">
-        <!--Main de JavaScript-->
-        <script src = "main.js" type="text/javascript" href = "main.js"> </script>
+       
         <!--Link de la libreria VIS.JS-->
         <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
         <!--Links de network-->
@@ -14,19 +13,19 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-      <form id="form1" value="NoDirigido">
+      <form id="form1" >
         <h1>Ingrese el tipo de grafo</h1>
-        <input type = "radio"  name = "Direccion" value = "Dirigido" required oninvalid="this.setCustomValidity('Por Favor seleccione una de las opciones')"> Dirigido</input>
-        <input type = "radio"  name = "Direccion" value = "NoDirigido" required oninvalid="this.setCustomValidity('Por Favor seleccione una de las opciones')"> No Dirigido</input>
+        <input type = "radio"  name = "Direccion" value = "Dirigido"  oninvalid ="this.setCustomValidity('Por Favor seleccione una de las opciones')"> Dirigido</input>
+        <input type = "radio"  name = "Direccion" value = "NoDirigido" checked required oninvalid  ="this.setCustomValidity('Por Favor seleccione una de las opciones')"> No Dirigido</input>
         <br><br>
       </form>
       <button type="button" id="locale" value="es" onclick="draw();">Comenzar Grafos</button>
-     
+      
       <br>
       
       <div id="node-popUp">
         <span id="node-operation">node</span> <br />
-        <table style="margin: auto">
+        <table style="margin: 1">
           <tbody>
             <tr>
               <td>id</td>
@@ -41,7 +40,7 @@
         <input type="button" value="save" id="node-saveButton" />
         <input type="button" value="cancel" id="node-cancelButton" />
       </div>
-      
+      <br>
       <div id="edge-popUp">
         <span id="edge-operation">edge</span> <br />
         <table style="margin: auto">
@@ -60,17 +59,22 @@
       
       <br />
       <div id="mynetwork"></div>
-      <td>
-        <br><br>
-        <button id="matrix" onclick="llenarMatriz();">Reproducir Matriz</button>
-        </td>
       <div>
+        <td>
+          <button id="matrix" onclick="llenarMatriz();">Reproducir Matriz y matriz de caminos</button>
+          </td>
         <h2 class="nombreM">Matriz</h2>
         <table id="table"></table>
         <div id="conex"></div>
+        
+        <div>
+          <h2>Tabla Caminos</h2>
+          <table id="TablaCam"></table>
+        </div>  
+        
     </div>
 
 
-      <script src = "main.js" type="text/javascript" href = "main.js"> </script>
+      <script src="main.js"></script>
   </body>
 </html>
