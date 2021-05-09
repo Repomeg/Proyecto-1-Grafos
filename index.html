@@ -5,7 +5,6 @@
         <meta charset = "UTF-8 ">
         <!--Hoja de estilos de css-->
         <link rel = "stylesheet" href = "styles.css">
-       
         <!--Link de la libreria VIS.JS-->
         <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
         <!--Links de network-->
@@ -13,19 +12,25 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
+      <figure>
+          <img src="data:image/png;base64,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">
+        </figure>
       <form id="form1" >
-        <h1>Ingrese el tipo de grafo</h1>
-        <input type = "radio"  name = "Direccion" value = "Dirigido"  oninvalid ="this.setCustomValidity('Por Favor seleccione una de las opciones')"> Dirigido</input>
-        <input type = "radio"  name = "Direccion" value = "NoDirigido" checked required oninvalid  ="this.setCustomValidity('Por Favor seleccione una de las opciones')"> No Dirigido</input>
-        <br><br>
+        <h1 class="Titulo1">Proyecto 1 de grafos</h1>
+        <h1 class="Titulo2">Ingrese el tipo de grafo</h1>
+        
+        <div class="seleccion">
+        <input type = "radio" id="Seleccion1"  name = "Direccion" value = "Dirigido"  oninvalid ="this.setCustomValidity('Por Favor seleccione una de las opciones')"> Dirigido</input>
+        <input type = "radio" id="Seleccion2" name = "Direccion" value = "NoDirigido" checked required oninvalid  ="this.setCustomValidity('Por Favor seleccione una de las opciones')"> No Dirigido</input>
+      <br><br>
       </form>
       <button type="button" id="locale" value="es" onclick="draw();">Comenzar Grafos</button>
-      
+         </div>
       <br>
       
       <div id="node-popUp">
         <span id="node-operation">node</span> <br />
-        <table style="margin: 1">
+        <table id="Table1"style="margin: 1">
           <tbody>
             <tr>
               <td>id</td>
@@ -61,14 +66,16 @@
       <div id="mynetwork"></div>
       <div>
         <td>
+          <div class="seleccion">
           <button id="matrix" onclick="llenarMatriz();">Reproducir Matriz y matriz de caminos</button>
+        </div>
           </td>
-        <h2 class="nombreM">Matriz</h2>
+        <h2 class="Titulo2">Matriz</h2>
         <table id="table"></table>
         <div id="conex"></div>
         
         <div>
-          <h2>Tabla Caminos</h2>
+          <h2 class="Titulo2">Tabla Caminos</h2>
           <table id="TablaCam"></table>
         </div>  
         
