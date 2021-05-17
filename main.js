@@ -166,7 +166,7 @@ function ciclo(){
 }
 
 function hamiltoniano(){
-  cont = 0;
+  var cont = 0;
   if(conexo() === true){
       if(vertices.length>=3){
         for(let i = 0; i<vertices.length; i++){
@@ -178,27 +178,41 @@ function hamiltoniano(){
         }
         if(cont === vertices.length){
           console.log("Es hamiltoniana");
+          return true;
         }
         else{
           console.log("No es hamiltoniana");
+          return false;
         }
       }
       else{
         console.log("No es hamiltoniana");
+        return false;
       }
     }
     else{
     console.log("No es hamiltoniana");
+    return false;
   }
 }
 
 function euleriano(){
-  var grad = [];
-  grad = gradoVertice(vertices);
-  for(let i=0; i<aristas.length;i++){
-    if(aristas[i][2]==true){
-      console.log("Su grado no es euleriano");
+  var contPar = 0;
+  if(conexo() === true){
+    for(let i = 0; i<vertices.length; i++){
+      if(gradoVertice(vertices[i])%2 === 0){
+        contPar++;
+      }
     }
+    if(contPar === vertices.length){
+      console.log("Es euleriano");
+    }
+    else{
+      console.log("No es euleriano");
+    }
+  }
+  else{
+    console.log("No es euleriano");
   }
 }
 
