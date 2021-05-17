@@ -1,6 +1,6 @@
 body,
 select {
-  font: 10pt sans;
+  font-family: 'Roboto Mono', monospace;
 }
 
 body{
@@ -29,29 +29,30 @@ blanco #F2F2F2
 .Titulo2{
   font-size: 35px;
   text-align: center;
-  color: #f9f9f9;;
+  color: #f9f9f9;
 }
 
 .seleccion{
   font-size: 30px;
   text-align: center;
-  color: #f9f9f9;;
+  color: #f9f9f9;
 }
 
 /*Botones*/
 #locale,
 #matrix{
+  font-family: 'Roboto Mono', monospace;
   font-size: 30px;
   border: 10px solid #03738C;
   background-color: #3892A6;
 }
 
 #locale{
-  color: #f9f9f9;;
+  color: #f9f9f9;
 }
 
 #matrix{
-  color: #f9f9f9;;
+  color: #f9f9f9;
   margin-top: 10px;
 }
 
@@ -93,13 +94,14 @@ div.table_description {
 /*Cajas de datos*/
 
 #node-popUp {
+  font-size: 15px;
   display: none;
   position: absolute;
   top: 390px;
   left: 150px;
   z-index: 299;
-  width: 255px;
-  height: 120px;
+  width: 275px;
+  height: 160px;
   background-color: #f9f9f9;
   border-style: solid;
   border-width: 10px;
@@ -117,8 +119,8 @@ div.table_description {
   top: 390px;
   left: 150px;
   z-index: 299;
-  width: 255px;
-  height: 120px;
+  width: 275px;
+  height: 160px;
   background-color: #f9f9f9;
   border-style: solid;
   border-width: 10px;
