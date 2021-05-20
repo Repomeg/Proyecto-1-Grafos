@@ -5,13 +5,17 @@ var network = null;
 var vertices = null;
 var aristas_from = null;
 var aristas_to = null;
-var aristas = [];
+
 var peso = null;
 
 var mAdyacencia = null;
 var mCaminos = null;
 
 var infociclo;
+
+var i;
+var j;
+var k;
 
 var form = document.querySelector("#form1");
 
@@ -27,7 +31,7 @@ function destroy() {
 }
 
 function buscarConexo(columna,fila){
-  for(let i=0; i<(aristas_from.length);i++){
+  for( i=0; i<(aristas_from.length);i++){
     if(form.Direccion.value=="Dirigido"){
       if(columna===aristas_from[i] && fila===aristas_to[i])
           return 1;
@@ -48,8 +52,8 @@ function llenarMatriz() {
   }
   mAdyacencia = [];
   var aux = []; // columnas
-    for(let i=0; i<vertices.length;i++){
-      for(let j=0; j<vertices.length;j++){
+    for( i=0; i<vertices.length;i++){
+      for( j=0; j<vertices.length;j++){
         if(buscarConexo(vertices[i],vertices[j])===1){
           aux.push(1);
          }
@@ -85,8 +89,8 @@ function llenarMatriz() {
 function conexo(){
   var  cont=0;
   
-  for(let i=0; i<vertices.length;i++){
-    for(let j=0; j<vertices.length;j++){
+  for( i=0; i<vertices.length;i++){
+    for( j=0; j<vertices.length;j++){
       if(mCaminos[i][j]===0){
         cont++;
       }
@@ -105,12 +109,14 @@ function conexo(){
 }
 
 function MatCami(){
+  var a;
+  var b;
   var table = document.getElementById("TablaCam");
   table.innerHTML = "";
   mCaminos= mAdyacencia;
-  for(let k = 0; k < mCaminos.length; k++){
-    for(let i = 0; i < mCaminos.length; i++){
-      for(let j = 0; j < mCaminos.length; j++){
+  for( k = 0; k < mCaminos.length; k++){
+    for( i = 0; i < mCaminos.length; i++){
+      for( j = 0; j < mCaminos.length; j++){
         if(mAdyacencia[i][j] == 1 || mAdyacencia[i][k] == 1 && mAdyacencia[k][j] == 1){
           mAdyacencia[i][j] = 1;
         }
@@ -120,12 +126,12 @@ function MatCami(){
       }
     }
   }
-  for(var i=0; i<mCaminos.length; i++) {
+  for( a=0; a<mCaminos.length; a++) {
     var newRow = table.insertRow(table.length);
-    for(var j=0; j<mCaminos[i].length; j++) {
-      var cell = newRow.insertCell(j);
+    for( b=0; b<mCaminos[a].length; b++) {
+      var cell = newRow.insertCell(b);
 
-      cell.innerHTML = mCaminos[i][j];
+      cell.innerHTML = mCaminos[a][b];
     }
   }
   console.log(mCaminos);
@@ -137,7 +143,7 @@ function gradoVertice(x){
   var guardaNodo1 = 0;
   var guardaNodo2 = 0;
   
-  for(let i = 0; i<vertices.length; i++){
+  for( i = 0; i<vertices.length; i++){
     
     guardaNodo1 = aristas_from[i];
     guardaNodo2 = aristas_to[i];
@@ -152,7 +158,7 @@ function gradoVertice(x){
 
 function ciclo(){
   var grado, cont = 0;
-  for(let i =0;i<vertices.length;i++){
+  for( i =0;i<vertices.length;i++){
     grado = gradoVertice(vertices[i]);
     if(grado == 2){
       cont++;
@@ -169,7 +175,7 @@ function hamiltoniano(){
   var cont = 0;
   if(conexo() === true){
       if(vertices.length>=3){
-        for(let i = 0; i<vertices.length; i++){
+        for( i = 0; i<vertices.length; i++){
           
           if(gradoVertice(vertices[i]) >= (vertices.length/2)){
             cont++;
@@ -199,7 +205,7 @@ function hamiltoniano(){
 function euleriano(){
   var contPar = 0;
   if(conexo() === true){
-    for(let i = 0; i<vertices.length; i++){
+    for( i = 0; i<vertices.length; i++){
       if(gradoVertice(vertices[i])%2 === 0){
         contPar++;
       }
@@ -241,7 +247,7 @@ function draw() {
   vertices = [];
   aristas_from = [];
   aristas_to = [];
-  aristas = [];
+  //aristas = [];
   peso = [];
   var container = document.getElementById("mynetwork");
 
@@ -263,14 +269,14 @@ function draw() {
       },
       addEdge: function (data, callback) {
         if (data.from == data.to) {
-          var r = confirm("Do you want to connect the node to itself?");
+          var r = confirm("Desea conectar el nodo a si mismo?");
           if (r != true) {
             callback(null);
             return;
           }
         }
         if(form.Direccion.value=="Dirigido"){
-          var options = {
+          var options1 = {
             edges:{
               arrows:{
                 to:{
@@ -281,10 +287,10 @@ function draw() {
               }     
             }
           }
-          network.setOptions(options);
+          network.setOptions(options1);
         }
         else {
-          var options = {
+          var options2 = {
             edges:{
               arrows:{
                 to:{
@@ -295,7 +301,7 @@ function draw() {
               }
             }
           }
-          network.setOptions(options);
+          network.setOptions(options2);
         }
         
         document.getElementById("edge-operation").innerText = "Add Edge";
@@ -335,7 +341,7 @@ function cancelNodeEdit(callback) {
 function saveNodeData(data, callback) {
   data.id = document.getElementById("node-id").value;
   data.label = document.getElementById("node-label").value;
-  for(var i=0; i < vertices.length ;i++){
+  for( i=0; i < vertices.length ;i++){
     if(vertices[i]==data.id){
       clearNodePopUp();
       return alert("Nodo ya existente");  
@@ -376,7 +382,7 @@ function saveEdgeData(data, callback) {
 
   clearEdgePopUp();
   callback(data);
-  aristas[aristas_from.length] = [data.from, data.to];
+  
   aristas_from.push(data.from);
   aristas_to.push(data.to);
   peso.push(data.label);
