@@ -1,7 +1,7 @@
 var nodes = null;
 var edges = null;
 var network = null;
-
+var grafoDijkstra = [];
 var vertices = null;
 var aristas_from = null;
 var aristas_to = null;
@@ -18,9 +18,8 @@ var infociclo;
 var form = document.querySelector("#form1");
 
 // randomly create some nodes and edges
-var data = null;
-var seed = 2;
-
+var data=null;
+var seed=2;
 function destroy() {
   if (network !== null) {
     network.destroy();
@@ -43,6 +42,7 @@ function buscarConexo(columna,fila){
 
 function llenarMatriz() {  
   var table = document.getElementById("table");
+  var j;
   table.innerHTML = "";
   if(vertices==null) {
     table.innerHTML = "No hay nodos en la matriz";
@@ -50,8 +50,9 @@ function llenarMatriz() {
   }
   mAdyacencia = [];
   var aux = []; // columnas
-    for(let i=0; i<vertices.length;i++){
-      for(let j=0; j<vertices.length;j++){
+  var i;
+    for( i=0; i<vertices.length;i++){
+      for( j=0; j<vertices.length;j++){
         if(buscarConexo(vertices[i],vertices[j])===1){
           aux.push(1);
          }
@@ -71,9 +72,9 @@ function llenarMatriz() {
       }
     }
 
-    matrizCamino(mAdyacencia);
-    conexo(mCaminos);
-    if(conexo(mCaminos)==true){
+    matrizCamino();
+    conexo();
+    if(conexo()==true){
       infociclo = ciclo();
       euleriano();
       if(infociclo==false){
@@ -224,6 +225,8 @@ function conexo(){
 function matrizCamino(){
   var table = document.getElementById("TablaCam");
   var largo = mAdyacencia.length;
+  var a;
+  var b;
   mCaminos= mAdyacencia;
   for(let k = 0; k < largo; k++){
     for(let i = 0; i < largo; i++){
@@ -281,7 +284,7 @@ function ciclo(){
 }
 
 function hamiltoniano(){
-  cont = 0;
+  var cont = 0;
   if(conexo() === true){
       if(vertices.length>=3){
         for(let i = 0; i<vertices.length; i++){
@@ -295,20 +298,24 @@ function hamiltoniano(){
         if(cont === vertices.length){
           console.log("Es hamiltoniana");
           document.getElementById('hamiltoniano').innerHTML='Su grafo es hamiltoniano';
+          return true;
         }
         else{
           console.log("No es hamiltoniana");
           document.getElementById('hamiltoniano').innerHTML='Su grafo NO es hamiltoniano';
+          return false;
         }
       }
       else{
         console.log("No es hamiltoniana");
         document.getElementById('hamiltoniano').innerHTML='Su grafo NO es hamiltoniano';
+        return false;
       }
     }
     else{
     console.log("No es hamiltoniana");
     document.getElementById('hamiltoniano').innerHTML='Su grafo NO es hamiltoniano';
+    return false;
   }
 }
 
@@ -336,7 +343,8 @@ function euleriano(){
 }
 
 function agregarConex(nodoInicial, nodoFinal, valorDistancia) {
-  var arrayaux;
+var buscarNodo;
+var conexion;
   valorDistancia = parseInt(valorDistancia, 10);
 
   buscarNodo = grafoDijkstra.filter(item => item.origen === nodoInicial);
@@ -353,13 +361,15 @@ function agregarConex(nodoInicial, nodoFinal, valorDistancia) {
       destino: nodoFinal,
       distancia: valorDistancia
     });
-  };
+  }
 
-};
+}
 
 function shortestPath(){
-  grafoDijkstra = [];
+  var i;
+ 
   var enlaces;
+  var short;
   var desde= document.getElementById("desde").value;
   var hasta= document.getElementById("hasta").value;
 
@@ -373,7 +383,7 @@ function shortestPath(){
   grafoDijkstra.forEach(function (value, key, array) {
     enlaces = {};
 
-    value.conexiones.forEach(function (conexion, key, array) {
+    value.conexiones.forEach(function (conexion, key2, array2) {
       enlaces[conexion.destino] = conexion.distancia;
       
     });
@@ -431,7 +441,7 @@ function draw() {
   destroy();
   nodes = [];
   edges = [];
-
+  var options;
   vertices = [];
   aristas_from = [];
   aristas_to = [];
@@ -441,22 +451,22 @@ function draw() {
 
   // create a network
   
-  var options = {
+   options = {
     layout: { randomSeed: seed }, // just to make sure the layout is the same when the locale is changed
     locale: document.getElementById("locale").value,
     manipulation: {
-      addNode: function (data, callback) {
+      addNode: function (data0, callback) {
         // filling in the popup DOM elements
         document.getElementById("node-operation").innerText = "Add Node";
-        editNode(data, clearNodePopUp, callback);
+        editNode(data0, clearNodePopUp, callback);
       },
      /* editNode: function (data, callback) {
         // filling in the popup DOM elements
         document.getElementById("node-operation").innerText = "Edit Node";
         editNode(data, cancelNodeEdit, callback);
       },*/
-      addEdge: function (data, callback) {
-        if (data.from == data.to) {
+      addEdge: function (data2, callback) {
+        if (data2.from == data2.to) {
           var r = confirm("Do you want to connect the node to itself?");
           if (r != true) {
             callback(null);
@@ -464,7 +474,7 @@ function draw() {
           }
         }
         if(form.Direccion.value=="Dirigido"){
-          var options = {
+           options = {
             edges:{
               arrows:{
                 to:{
@@ -478,7 +488,7 @@ function draw() {
           network.setOptions(options);
         }
         else {
-          var options = {
+           options = {
             edges:{
               arrows:{
                 to:{
@@ -493,14 +503,14 @@ function draw() {
         }
         
         document.getElementById("edge-operation").innerText = "Add Edge";
-        editEdgeWithoutDrag(data, callback);
+        editEdgeWithoutDrag(data2, callback);
       },
       deleteNode: false,
       deleteEdge: false,
       editEdge: {
-        editWithoutDrag: function (data, callback) {
+        editWithoutDrag: function (data3, callback) {
           document.getElementById("edge-operation").innerText = "Edit Edge";
-          editEdgeWithoutDrag(data, callback);
+          editEdgeWithoutDrag(data3, callback);
         },
       },
     },
@@ -509,9 +519,9 @@ function draw() {
   document.getElementById("locale").innerHTML="Reiniciar Grafos";
 }
 
-function editNode(data, cancelAction, callback) {
+function editNode(data7, cancelAction, callback) {
   
-  document.getElementById("node-saveButton").onclick = saveNodeData.bind(this, data, callback);
+  document.getElementById("node-saveButton").onclick = saveNodeData.bind(this, data7, callback);
   document.getElementById("node-cancelButton").onclick = cancelAction.bind(this, callback);
   document.getElementById("node-popUp").style.display = "block";
 }
@@ -527,24 +537,24 @@ function cancelNodeEdit(callback) {
   callback(null);
 }
 
-function saveNodeData(data, callback) {
-  data.id = document.getElementById("node-id").value;
-  data.label = document.getElementById("node-id").value;
+function saveNodeData(data4, callback) {
+  data4.id = document.getElementById("node-id").value;
+  data4.label = document.getElementById("node-id").value;
   for(var i=0; i < vertices.length ;i++){
-    if(vertices[i]==data.id){
+    if(vertices[i]==data4.id){
       clearNodePopUp();
       return alert("Nodo ya existente");  
     }  
   }
-  vertices.push(data.id);
+  vertices.push(data4.id);
   clearNodePopUp();
-  callback(data);
+  callback(data4);
 }
 
-function editEdgeWithoutDrag(data, callback) {
+function editEdgeWithoutDrag(data5, callback) {
   // filling in the popup DOM elements
-  document.getElementById("edge-label").value = data.label;
-  document.getElementById("edge-saveButton").onclick = saveEdgeData.bind(this, data, callback);
+  document.getElementById("edge-label").value = data5.label;
+  document.getElementById("edge-saveButton").onclick = saveEdgeData.bind(this, data5, callback);
   document.getElementById("edge-cancelButton").onclick = cancelEdgeEdit.bind(this,callback);
   document.getElementById("edge-popUp").style.display = "block";
 }
@@ -560,20 +570,20 @@ function cancelEdgeEdit(callback) {
   callback(null);
 }
 
-function saveEdgeData(data, callback) {
-  if (typeof data.to === "object")
-    data.to = data.to.id;
+function saveEdgeData(data6, callback) {
+  if (typeof data6.to === "object")
+    data6.to = data6.to.id;
  
-  if (typeof data.from === "object")
-    data.from = data.from.id;
+  if (typeof data6.from === "object")
+    data6.from = data6.from.id;
 
-  data.label = document.getElementById("edge-label").value;
+  data6.label = document.getElementById("edge-label").value;
   //aristas[aristas_from.length] = [data.from, data.to];
-  aristas_from.push(data.from);
-  aristas_to.push(data.to);
-  peso.push(data.label);
+  aristas_from.push(data6.from);
+  aristas_to.push(data6.to);
+  peso.push(data6.label);
   clearEdgePopUp();
-  callback(data);
+  callback(data6);
 }
 
 function init() {
