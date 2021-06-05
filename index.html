@@ -10,6 +10,9 @@
         <!--Links de network-->
         <link rel="preload" href="styles.css" as="style">
         <link rel="stylesheet" href="styles.css">
+        <!--Fuente Roboto Mono-->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
     </head>
     <body> 
       <form id="form1" >
@@ -24,12 +27,13 @@
       </div>
       <br>
       <div id="node-popUp">
-        <span id="node-operation">node</span> <br />
-        <table style="margin: 1">
+        <span id="node-operation"></span> <br />
+        <table style="margin: 1" >
           <caption></caption>
           <th id="Bugsonar7"></th>
           <tbody>
             <div>Ingrese el ID del nodo</div>
+            <label id="aviso"> Los Valores de ID deben comenzar en 0 y avanzar de forma progresiva </label>
             <tr>
               <td>id</td>
               <td><input type="number" id="node-id" value="0" /></td>
@@ -83,55 +87,57 @@
         <div id="conex"></div>
     </div>
     <div>
-      <h2>Hamiltoniano/Euleriano</h2>
+      <h2 class="Titulo2">Hamiltoniano/Euleriano</h2>
       <div id=hamiltoniano></div>
       <div id=euleriano></div>
     </div>
 
     <td>
-      <h2>Camino Mas Corto</h2>
+      <h2 class="Titulo2">Camino Mas Corto</h2>
       <label id="Camino"></label>
       <label id="costo"></label>
     </td>
     <div>
       <td>
-        <table>
+        <table id="cajasdeingresotabla">
           <caption></caption>
           <th id="Bugsonar5"></th>
-          <td>
+          <td class="cajadeingreso">
             <div>ingrese ID nodo de llegada e ID nodo de salida</div>
             <input type="number" id="desde" value="0" onfocus=this.value="">
             <input type="number" id="hasta" value="0" onfocus=this.value="">
-            <button id="busqueda" onclick="shortestPath()">Buscar Camino</button>
+            <button id="cajaingreso" onclick="shortestPath()">Buscar Camino</button>
           </td>
         </table>    
       </td>
     </div> 
     <td>
-      <h2>Flujo máximo</h2>
+      <h2 class="Titulo2">Flujo máximo</h2>
       <label id="Camino_placeholder"></label>
       <label id="costo_placeholder"></label>
     </td>
     <div>
-      <td>
-        <table>
+      <td class="tablasdeingreso">
+        <table id="cajasdeingresotabla2">
           <caption></caption>
-          <th id="Bugsonar6"></th>
-          <td>
+          <th id="busgonarq6"></th>
+          <td class="cajadeingreso">
             <div>ingrese ID nodo de llegada e ID nodo de salida</div>
             <input type="number" id="inicio" value="0" onfocus=this.value="">
             <input type="number" id="final" value="0" onfocus=this.value="">
-            <button id="busqueda_placeholder" onclick="LlamarFord()">Buscar</button>
+            <button id="cajaingreso" onclick="LlamarFord()">Buscar</button>
           </td>
         </table>    
       </td>
     </div>
-    <div>
+    <div class="generador">
       <tr>
         <td>
-          <h2>Arbol Generador Minimo con Kruskal</h2>
+          <h2 class="Titulo2">Arbol Generador Minimo con Kruskal</h2>
+          <div class="seleccion">
           <button id="arbol-generador" onclick="kruskal()">Ver Arbol</button>
-          <div id="mynetwork2"></div>
+        </div>
+    
         </td>
       </tr>
     </div> 

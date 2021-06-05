@@ -5,9 +5,12 @@ var grafoDijkstra = [];
 var vertices = null;
 var aristas_from = null;
 var aristas_to = null;
-//var aristas = [];
 var peso = null;
 var auxlista= new Map();
+var pesoAux = [];
+var a_desde = [];
+var a_hacia = [];
+var contador = 1;
 
 var mAdyacencia = null;
 var mCaminos = null;
@@ -17,7 +20,7 @@ var infociclo;
 
 var form = document.querySelector("#form1");
 
-// randomly create some nodes and edges
+
 var data=null;
 var seed=2;
 function destroy() {
@@ -87,11 +90,6 @@ function llenarMatriz() {
     }
 
     MatrizDePeso();
-    kruskal();
-    /*
-    console.log(auxlista);
-        shortestPath();
-    //console.log("El flujo máximo posible es" + fordFulkerson (mPeso ,0 ,5)); */
     return mAdyacencia;
 }
 
@@ -100,11 +98,10 @@ function bfs(rGraph, s, t, parent) {
 	var visited = [];
 	var queue = [];
 	var V = rGraph.length;
-	// Create a visited array and mark all vertices as not visited
+
 	for (var i = 0; i < V; i++) {
 		visited[i] = false;
 	}
-	// Create a queue, enqueue source vertex and mark source vertex as visited
 	queue.push(s);
 	visited[s] = true;
 	parent[s] = -1;
@@ -119,23 +116,19 @@ function bfs(rGraph, s, t, parent) {
 			}
 		}
 	}
-	//If we reached sink in BFS starting from source, then return true, else false
 	return (visited[t] == true);
 }
 
 function fordFulkerson(graph, s, t) {
-  if (s < 0 || t < 0 || s > graph.length-1 || t > graph.length-1){
-    throw new Error("Ford-Fulkerson-Maximum-Flow :: invalid sink or source");
-  }
-  if(graph.length === 0){
-    throw new Error("Ford-Fulkerson-Maximum-Flow :: invalid graph");
-  }
+  if(form.Direccion.value!="Dirigido"){
+    alert("Esta funcion solo es valida con Grafos Dirigidos.");
+    console.log("El Grafo ingresado en la funcion de Flujo Maximo no es Valido.");
+    return 0;
+  } 
 	var rGraph = [];
 	for (var u = 0; u < graph.length; u++) {
 		var temp = [];
-    if(graph[u].length !== graph.length){
-      throw new Error("Ford-Fulkerson-Maximum-Flow :: invalid graph. graph needs to be NxN");
-    }
+
 		for (v = 0; v < graph.length; v++) {
 			temp.push(graph[u][v]);
 		}
@@ -362,7 +355,6 @@ var conexion;
       distancia: valorDistancia
     });
   }
-
 }
 
 function shortestPath(){
@@ -401,40 +393,100 @@ function shortestPath(){
   }
 }
 
-function kruskal(){
-  var nodoA = [];
-  var nodoB = [];
-  var arcos = [];
+function llenar(){
+  for (var i = 0; i < peso.length ; i++){
+    pesoAux[i] = peso[i][2];
+  }
+}
 
-  var mKruskal = mPeso;
-  var min = 9999;
-  var ejeX = 0;
-  var ejeY = 0;
+function stringAInt(boo){
+  for (var i = 0; i < boo.length; i++ ){
+    var aux = boo[i];
+    aux = parseInt(boo[i], 10);
+    boo[i] = aux;
+  }
+}
 
-  for(var i = 0; i < vertices.length; i++){
-    for(var j = 0; j < vertices.length; j++){
-      if(min > mKruskal[ejeX][j] && mKruskal[ejeX][j] != 0){
-        min = mKruskal[ejeX][j];
-        ejeY = j;
-      }
-      else{
-        if(mKruskal[j][ejeX] < min && mKruskal[j][ejeX] != 0){
-          min = mKruskal[j][ejeX];
-          ejeY = j;
-        }
-      }
-    }
-    if(min != 0 || min != 9999){
-      nodoA.push(ejeX);
-      nodoB.push(ejeY);
-      arcos.push(min);
-      mKruskal[ejeX][ejeY] = 0;
-      mKruskal[ejeY][ejeX] = 0;
-      ejeX = ejeY;
-      min = 9999;
+function order(){
+  for(var i = 0; i < pesoAux.length ; i++){
+    if (aristas_from[i] > aristas_to[i]){
+      var aux = aristas_from[i];
+      aristas_from[i] = aristas_to[i];
+      aristas_to[i] = aux;
     }
   }
-  console.log(nodoA, nodoB, arcos);
+}
+
+function bubble(){
+  var len = pesoAux.length;    
+  for (var i = 0; i < len ; i++) {
+    for(var j = 0 ; j < len - i - 1; j++){
+      if (pesoAux[j] > pesoAux[j + 1]){
+      var temp = pesoAux[j];
+      var temp2 = aristas_from[j];
+      var temp3 = aristas_to[j];
+      pesoAux[j] = pesoAux[j+1];
+      aristas_from[j] = aristas_from[j+1];
+      aristas_to[j] = aristas_to[j+1];
+      pesoAux[j+1] = temp;
+      aristas_from[j+1] = temp2;
+      aristas_to[j+1] = temp3;
+      }
+    }
+  }
+}
+
+function kruskal (){
+  var total = 0;
+  llenar();
+  stringAInt(pesoAux);
+  order();
+  bubble();
+
+  if(conexo()!=true){
+    alert("Esta funcion solo esta disponible para Grafos que son Conexos.");
+    console.log("El Grafo ingresado a la funcion Kruskal no es Valido.");
+    return 0
+  }
+
+
+  for (var i = 0; i<pesoAux.length;i++){   
+  if ((a_desde.includes(aristas_to[i], 0) == false) && (a_hacia.includes(aristas_from[i], 0) == false)){
+    if (aristas_from[i] != aristas_from[i+1]){
+      a_desde.push(aristas_from[i]);
+      a_hacia.push(aristas_to[i]);
+      contador++;
+      total = total + pesoAux[i];
+    }
+  }else if((a_desde.includes(aristas_from[i], 0) == false) && (a_hacia.includes(aristas_to[i], 0) == false)){
+    if (aristas_from[i] != aristas_from[i+1]){
+      a_desde.push(aristas_from[i]);
+      a_hacia.push(aristas_to[i]);
+      contador++;
+      total = total + pesoAux[i];
+    }
+  }else if((a_hacia.includes(aristas_from[i], 0) == false) && (a_hacia.includes(aristas_to[i], 0) == false)){
+    if (aristas_from[i] != aristas_from[i+1]){
+      a_desde.push(aristas_from[i]);
+      a_hacia.push(aristas_to[i]);
+      contador++;
+      total = total + pesoAux[i];
+    }
+  }else if((a_desde.includes(aristas_from[i], 0) == false) && (a_desde.includes(aristas_to[i], 0) == false)){
+    if (aristas_from[i] != aristas_from[i+1]){
+      a_desde.push(aristas_from[i]);
+      a_hacia.push(aristas_to[i]);
+      contador++;
+      total = total + pesoAux[i];
+    }
+  }
+    if (contador == vertices.length){
+      break;
+    }
+  }
+  console.log(a_desde);
+  console.log(a_hacia);
+  return total;
 }
 
 function draw() {
@@ -445,29 +497,26 @@ function draw() {
   vertices = [];
   aristas_from = [];
   aristas_to = [];
-  //aristas = [];
   peso = [];
+  mAdyacencia = [];
+  mCaminos = [];
+  mPeso = [];
   var container = document.getElementById("mynetwork");
 
   // create a network
   
    options = {
-    layout: { randomSeed: seed }, // just to make sure the layout is the same when the locale is changed
+    layout: { randomSeed: seed }, 
     locale: document.getElementById("locale").value,
     manipulation: {
       addNode: function (data0, callback) {
         // filling in the popup DOM elements
-        document.getElementById("node-operation").innerText = "Add Node";
+        
         editNode(data0, clearNodePopUp, callback);
       },
-     /* editNode: function (data, callback) {
-        // filling in the popup DOM elements
-        document.getElementById("node-operation").innerText = "Edit Node";
-        editNode(data, cancelNodeEdit, callback);
-      },*/
       addEdge: function (data2, callback) {
         if (data2.from == data2.to) {
-          var r = confirm("Do you want to connect the node to itself?");
+          var r = confirm("¿Quieres conectar este nodo a si mismo?(Formara un ciclo)");
           if (r != true) {
             callback(null);
             return;
@@ -502,14 +551,14 @@ function draw() {
           network.setOptions(options);
         }
         
-        document.getElementById("edge-operation").innerText = "Add Edge";
+        document.getElementById("edge-operation").innerText = "Añadir Nodo";
         editEdgeWithoutDrag(data2, callback);
       },
       deleteNode: false,
       deleteEdge: false,
       editEdge: {
         editWithoutDrag: function (data3, callback) {
-          document.getElementById("edge-operation").innerText = "Edit Edge";
+          document.getElementById("edge-operation").innerText = "Editar Nodo";
           editEdgeWithoutDrag(data3, callback);
         },
       },
@@ -537,7 +586,7 @@ function cancelNodeEdit(callback) {
   callback(null);
 }
 
-function saveNodeData(data4, callback) {
+function saveNodeData(data4, callback) {  //POP UP PARA GUARDAR DATOS DEL NODO
   data4.id = document.getElementById("node-id").value;
   data4.label = document.getElementById("node-id").value;
   for(var i=0; i < vertices.length ;i++){
@@ -552,7 +601,7 @@ function saveNodeData(data4, callback) {
 }
 
 function editEdgeWithoutDrag(data5, callback) {
-  // filling in the popup DOM elements
+
   document.getElementById("edge-label").value = data5.label;
   document.getElementById("edge-saveButton").onclick = saveEdgeData.bind(this, data5, callback);
   document.getElementById("edge-cancelButton").onclick = cancelEdgeEdit.bind(this,callback);
@@ -570,7 +619,7 @@ function cancelEdgeEdit(callback) {
   callback(null);
 }
 
-function saveEdgeData(data6, callback) {
+function saveEdgeData(data6, callback) {   // POP UP PARA LLENAR LOS DATOS DE LA ARISTA
   if (typeof data6.to === "object")
     data6.to = data6.to.id;
  
@@ -578,7 +627,7 @@ function saveEdgeData(data6, callback) {
     data6.from = data6.from.id;
 
   data6.label = document.getElementById("edge-label").value;
-  //aristas[aristas_from.length] = [data.from, data.to];
+
   aristas_from.push(data6.from);
   aristas_to.push(data6.to);
   peso.push(data6.label);
