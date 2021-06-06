@@ -44,6 +44,7 @@ function buscarConexo(columna,fila){
 }
 
 function llenarMatriz() {  
+  console.log("Entrando a la Funcion llenarMatriz()");
   var table = document.getElementById("table");
   var j;
   table.innerHTML = "";
@@ -66,7 +67,8 @@ function llenarMatriz() {
       mAdyacencia[i]=aux;
       aux=[];
     }
-
+console.log("Matriz creada con exito");
+console.log("Matriz llenada con exito");
     for( i=0; i<mAdyacencia.length; i++) {
       var newRow = table.insertRow(table.length);
       for( j=0; j<mAdyacencia[i].length; j++) {
@@ -74,9 +76,11 @@ function llenarMatriz() {
         cell.innerHTML = mAdyacencia[i][j];
       }
     }
-
+    console.log("Matriz impresa");
     matrizCamino();
+    console.log("Matriz camino reproducida con éxito");
     conexo();
+    console.log("Función Conexo() aplicada con éxito");
     if(conexo()==true){
       infociclo = ciclo();
       euleriano();
@@ -90,6 +94,7 @@ function llenarMatriz() {
     }
 
     MatrizDePeso();
+    console.log("Calculando peso de la matriz");
     return mAdyacencia;
 }
 
@@ -120,6 +125,7 @@ function bfs(rGraph, s, t, parent) {
 }
 
 function fordFulkerson(graph, s, t) {
+  console.log("Inicializando funcion fordFulkerson()");
   if(form.Direccion.value!="Dirigido"){
     alert("Esta funcion solo es valida con Grafos Dirigidos.");
     console.log("El Grafo ingresado en la funcion de Flujo Maximo no es Valido.");
@@ -204,23 +210,25 @@ function conexo(){
     } 
   }
   if(cont!=0) {
-    console.log("no es conexo");
     document.getElementById('conex').innerHTML='Su matriz no es conexa';
     return false;
   }
   else{
-    console.log("es conexo");
+    
     document.getElementById('conex').innerHTML='Su matriz es conexa';
     return true;
   }
 }
 
 function matrizCamino(){
+  console.log("Entrando a la funcion matrizCamino()");
   var table = document.getElementById("TablaCam");
   var largo = mAdyacencia.length;
   var a;
   var b;
+  table.innerHTML = "";
   mCaminos= mAdyacencia;
+  console.log("Llenando Matriz de Camino");
   for(let k = 0; k < largo; k++){
     for(let i = 0; i < largo; i++){
       for(let j = 0; j < largo; j++){
@@ -233,6 +241,7 @@ function matrizCamino(){
       }
     }
   }
+  console.log("Matriz llenada con exito");
   for( a=0; a<mCaminos.length; a++) {
     var newRow = table.insertRow(table.length);
     for( b=0; b<mCaminos[a].length; b++) {
@@ -241,6 +250,7 @@ function matrizCamino(){
       cell.innerHTML = mCaminos[a][b];
     }
   }
+  console.log("Imprimiendo Matriz de Camino");
   mCaminos = mAdyacencia;
   console.log(mCaminos);
   return mCaminos;
@@ -269,14 +279,15 @@ function ciclo(){
     }
   }
   if(vertices.length==cont){
-    console.log("Es hamiltoniano");
-    document.getElementById('hamiltoniano').innerHTML='Su grafo es hamiltoniano';
+    
+    document.getElementById("hamiltoniano").innerHTML="Su grafo es hamiltoniano";
     return true;
   }
   else return false;
 }
 
 function hamiltoniano(){
+  console.log("inicializando función hamiltoniano()");
   var cont = 0;
   if(conexo() === true){
       if(vertices.length>=3){
@@ -289,30 +300,31 @@ function hamiltoniano(){
           console.log(cont);
         }
         if(cont === vertices.length){
-          console.log("Es hamiltoniana");
+          
           document.getElementById('hamiltoniano').innerHTML='Su grafo es hamiltoniano';
           return true;
         }
         else{
-          console.log("No es hamiltoniana");
+          
           document.getElementById('hamiltoniano').innerHTML='Su grafo NO es hamiltoniano';
           return false;
         }
       }
       else{
-        console.log("No es hamiltoniana");
+        
         document.getElementById('hamiltoniano').innerHTML='Su grafo NO es hamiltoniano';
         return false;
       }
     }
     else{
-    console.log("No es hamiltoniana");
+    
     document.getElementById('hamiltoniano').innerHTML='Su grafo NO es hamiltoniano';
     return false;
   }
 }
 
 function euleriano(){
+  console.log("inicializando función euleriano()");
   var contPar = 0;
   if(conexo() === true){
     for(let i = 0; i<vertices.length; i++){
@@ -321,16 +333,16 @@ function euleriano(){
       }
     }
     if(contPar === vertices.length){
-      console.log("Es euleriano");
+      
       document.getElementById('euleriano').innerHTML='Su grafo es euleriano';
     }
     else{
-      console.log("No es euleriano");
+      
       document.getElementById('euleriano').innerHTML='Su grafo NO es euleriano';
     }
   }
   else{
-    console.log("No es euleriano");
+    
     document.getElementById('euleriano').innerHTML='Su grafo NO es euleriano';
   }
 }
@@ -401,8 +413,8 @@ function llenar(){
 
 function stringAInt(boo){
   for (var i = 0; i < boo.length; i++ ){
-    var aux = boo[i];
-    aux = parseInt(boo[i], 10);
+    //var aux = boo[i];
+    var aux = parseInt(boo[i], 10);
     boo[i] = aux;
   }
 }
@@ -458,21 +470,24 @@ function kruskal (){
       contador++;
       total = total + pesoAux[i];
     }
-  }else if((a_desde.includes(aristas_from[i], 0) == false) && (a_hacia.includes(aristas_to[i], 0) == false)){
+  }
+  if((a_desde.includes(aristas_from[i], 0) == false) && (a_hacia.includes(aristas_to[i], 0) == false)){
     if (aristas_from[i] != aristas_from[i+1]){
       a_desde.push(aristas_from[i]);
       a_hacia.push(aristas_to[i]);
       contador++;
       total = total + pesoAux[i];
     }
-  }else if((a_hacia.includes(aristas_from[i], 0) == false) && (a_hacia.includes(aristas_to[i], 0) == false)){
+  }
+  if((a_hacia.includes(aristas_from[i], 0) == false) && (a_hacia.includes(aristas_to[i], 0) == false)){
     if (aristas_from[i] != aristas_from[i+1]){
       a_desde.push(aristas_from[i]);
       a_hacia.push(aristas_to[i]);
       contador++;
       total = total + pesoAux[i];
     }
-  }else if((a_desde.includes(aristas_from[i], 0) == false) && (a_desde.includes(aristas_to[i], 0) == false)){
+  }
+  if((a_desde.includes(aristas_from[i], 0) == false) && (a_desde.includes(aristas_to[i], 0) == false)){
     if (aristas_from[i] != aristas_from[i+1]){
       a_desde.push(aristas_from[i]);
       a_hacia.push(aristas_to[i]);
@@ -486,10 +501,13 @@ function kruskal (){
   }
   console.log(a_desde);
   console.log(a_hacia);
+  ImgKrus();
   return total;
 }
 
+
 function draw() {
+  console.log("Se ha seleccionado un Grafo de tipo ",form.Direccion.value);
   destroy();
   nodes = [];
   edges = [];
@@ -596,6 +614,7 @@ function saveNodeData(data4, callback) {  //POP UP PARA GUARDAR DATOS DEL NODO
     }  
   }
   vertices.push(data4.id);
+  console.log("Se ha creado el nodo:",data4.id);
   clearNodePopUp();
   callback(data4);
 }
@@ -631,10 +650,24 @@ function saveEdgeData(data6, callback) {   // POP UP PARA LLENAR LOS DATOS DE LA
   aristas_from.push(data6.from);
   aristas_to.push(data6.to);
   peso.push(data6.label);
+  console.log("Se ha creado la arista desde: ",data6.from," hasta: ", data6.to," con un peso de: ",data6.label);
   clearEdgePopUp();
   callback(data6);
 }
 
 function init() {
   draw();
+}
+function ImgKrus(){
+  var baba=[];
+  var numi = a_desde.length;
+
+  const divGrafo = document.querySelector('.grafo');
+  for(var x = 0; x<numi;x++){
+    baba[x]=+a_desde[x]+'--'+a_hacia[x]+';';
+  }
+  let delta = baba.join('');
+  console.log(delta);
+
+  divGrafo.innerHTML = `<img src=https://quickchart.io/graphviz?graph=graph{${delta}}>`
 }
